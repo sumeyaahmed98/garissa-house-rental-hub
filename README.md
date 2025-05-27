@@ -1,1 +1,0 @@
-# garissa-house-rental-hub

@@ -1,0 +1,65 @@
+{
+  "properties": [
+    {
+      "title": "List Your Property",
+      "description": "Easily showcase your wedding venues or living spaces to thousands of potential guests. Our platform makes property listing simple and effective.",
+      "image": "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      "alt": "Wedding venue in Garissa",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "title": "Find Your Perfect Space",
+      "description": "Browse hundreds of verified listings across Garissa. Filter by location, price, and amenities to find exactly what you need.",
+      "image": "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "alt": "Modern living space in Garissa"
+    }
+  ],
+  "rental": [
+    {
+      "id": "94ff",
+      "property": "Bulla Mzuri",
+      "unit": "Flat D",
+      "tenantName": "abdiaziz",
+      "contact": "0742658378",
+      "email": "cabdulcazizc@gmail.com",
+      "rent": "67",
+      "dueDate": "2025-05-28",
+      "duration": "6 months",
+      "utilities": "bjknlkjmo",
+      "notes": "x55tyio[ko,,]"
+    }
+  ],
+  "users": [
+    {
+      "id": "c179",
+      "email": "cabdulcazizc@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "e9e3",
+      "email": "cabdulcazizc@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "7efd",
+      "email": "cabdulcazizc@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "6292",
+      "email": "cabdulcazizc@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "d43f",
+      "email": "cabdulcazizc@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "db8b",
+      "email": "cabdulcazizc@gmail.com",
+      "password": "12345678"
+    }
+  ]
+}
