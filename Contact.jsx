@@ -241,8 +241,8 @@ const ContactUs = () => {
                     </div>
                     <div className="ml-6">
                       <h3 className="text-xl font-bold text-gray-900">Phone</h3>
-                      <p className="mt-2 text-lg text-gray-600">+1 (555) 123-4567</p>
-                      <p className="text-lg text-gray-600">Mon-Fri: 9am-6pm</p>
+                      <p className="mt-2 text-lg text-gray-600">+254720676025</p>
+                      <p className="text-lg text-gray-600">Mon-Fri: 8am-6pm</p>
                     </div>
                   </div>
 
@@ -254,7 +254,7 @@ const ContactUs = () => {
                     </div>
                     <div className="ml-6">
                       <h3 className="text-xl font-bold text-gray-900">Email</h3>
-                      <p className="mt-2 text-lg text-gray-600">info@propertyrentals.com</p>
+            
                       <p className="text-lg text-gray-600">support@propertyrentals.com</p>
                     </div>
                   </div>
