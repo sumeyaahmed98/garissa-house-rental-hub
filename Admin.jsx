@@ -29,12 +29,12 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchData = () => {
-    fetch("http://localhost:3001/rental")
+    fetch("http://localhost:3000/rental")
       .then((res) => res.json())
       .then((data) => setRentals(data))
       .catch((err) => console.error("Error fetching rentals", err));
 
-    fetch("http://localhost:3001/properties")
+    fetch("http://localhost:3000/properties")
       .then(res => res.json())
       .then(data => setProperties(data))
       .catch(err => console.error("Error fetching properties", err));
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
   // Property CRUD operations
   const deleteProperty = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/properties/${id}`, {
+      const response = await fetch(`http://localhost:3000/properties/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
       let response;
       if (editingProperty) {
         // Update existing property
-        response = await fetch(`http://localhost:3001/properties/${editingProperty.id}`, {
+        response = await fetch(`http://localhost:3000/properties/${editingProperty.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
         });
       } else {
         // Add new property
-        response = await fetch('http://localhost:3001/properties', {
+        response = await fetch('http://localhost:3000/properties', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ const AdminDashboard = () => {
   // Rental CRUD operations
   const deleteRental = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/rental/${id}`, {
+      const response = await fetch(`http://localhost:3000/rental/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -165,7 +165,7 @@ const AdminDashboard = () => {
       let response;
       if (editingRental) {
         // Update existing rental
-        response = await fetch(`http://localhost:3001/rental/${editingRental.id}`, {
+        response = await fetch(`http://localhost:3000/rental/${editingRental.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ const AdminDashboard = () => {
         });
       } else {
         // Add new rental
-        response = await fetch('http://localhost:3001/rental', {
+        response = await fetch('http://localhost:3000/rental', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -41,7 +41,7 @@ const RentalForm = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:3001/rental", {
+      const res = await fetch("http://localhost:3000/rental", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

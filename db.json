@@ -13,6 +13,13 @@
       "description": "Browse hundreds of verified listings across Garissa. Filter by location, price, and amenities to find exactly what you need.",
       "image": "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       "alt": "Modern living space in Garissa"
+    },
+    {
+      "title": "modern house",
+      "description": "hhjhnlk",
+      "image": "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "alt": "Modern living space in Garissa",
+      "id": "3724"
     }
   ],
   "rental": [
@@ -28,6 +35,30 @@
       "duration": "6 months",
       "utilities": "bjknlkjmo",
       "notes": "x55tyio[ko,,]"
+    },
+    {
+      "id": "a30e",
+      "property": "Bulla Sunnah",
+      "unit": "Flat A",
+      "tenantName": "yussuf",
+      "contact": "0725407686",
+      "email": "yusuf@gmail.com",
+      "rent": "2",
+      "dueDate": "2025-08-17",
+      "duration": "2 years",
+      "utilities": "kljilk",
+      "notes": "ugkujh,kl"
+    },
+    {
+      "property": "Bulla Sunnah",
+      "unit": "Flat A",
+      "tenantName": "sawdaa",
+      "contact": "0742658378",
+      "email": "ridh2562@gmail.com",
+      "rent": "12",
+      "dueDate": "2025-08-14",
+      "duration": "5",
+      "id": "74da"
     }
   ],
   "users": [
@@ -59,6 +90,21 @@
     {
       "id": "db8b",
       "email": "cabdulcazizc@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "fb67",
+      "email": "sumeyaahmed0039@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "4273",
+      "email": "sumeyaahmed0039@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "9e83",
+      "email": "sumeyaahmed0039@gmail.com",
       "password": "12345678"
     }
   ]

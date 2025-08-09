@@ -20,7 +20,7 @@ function Signup() {
         e.preventDefault();
 
         try {
-            await axios.post("http://localhost:3001/users", formData);
+            await axios.post("http://localhost:3000/users", formData);
             alert("Signup successful! Redirecting to login...");
             navigate("/login");
         } catch (error) {

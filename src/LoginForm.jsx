@@ -20,7 +20,7 @@ function LoginForm({ setUser }) {
         e.preventDefault();
 
         try {
-            const res = await axios.get("http://localhost:3001/users", {
+            const res = await axios.get("http://localhost:3000/users", {
                 params: {
                     email: formData.email,
                     password: formData.password
