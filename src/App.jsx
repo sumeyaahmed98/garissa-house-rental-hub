@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
 import Property from "./Property";
@@ -9,36 +9,91 @@ import Footer from "./Footer";
 import SignupForm from "./signupForm";
 import LoginForm from "./LoginForm";
 import RentalForm from "./Renthouse";
-import AdminDashboard from "../Admin";
-import ContactUs from "../Contact";
+import AdminDashboard from "./admin/AdminDashboard";
+import OwnerDashboard from "./owner/OwnerDashboard";
+import Contact from "../Contact";
 
 function App() {
-  // Manage user state
   const [user, setUser] = useState(null);
 
-  // Simulate logout
   const handleLogout = () => {
-    // You might also clear localStorage/sessionStorage here if used
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
-    // Optionally redirect or show message
+  };
+
+  const isAuthenticated = !!user;
+  const isAdmin = user?.role === "admin";
+  const isOwner = user?.role === "owner";
+
+  const ProtectedRoute = ({ children, requiredRole }) => {
+    if (!isAuthenticated) {
+      return <Navigate to="/login" replace />;
+    }
+
+    if (requiredRole && user.role !== requiredRole) {
+      return <Navigate to="/unauthorized" replace />;
+    }
+
+    return children;
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar user={user} handleLogout={handleLogout} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/property" element={<Property />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/signupForm" element={<SignupForm setUser={setUser} />} />
-        <Route path="/login" element={<LoginForm setUser={setUser} />} />
-        <Route path="/renthouse" element={<RentalForm />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/contact" element={<ContactUs/>} />
-      </Routes>
+      
+      <main className="flex-grow">
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/property" element={<Property />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/contact" element={<Contact />} />
+
+          {/* Authentication routes */}
+          <Route 
+            path="/login" 
+            element={
+              isAuthenticated ? 
+                <Navigate to={isAdmin ? "/admin" : isOwner ? "/ownerdashboard" : "/"} /> : 
+                <LoginForm setUser={setUser} /> 
+            } 
+          />
+          <Route 
+            path="/signupForm" 
+            element={
+              isAuthenticated ? 
+                <Navigate to={isAdmin ? "/admin" : isOwner ? "/ownerdashboard" : "/"} /> : 
+                <SignupForm setUser={setUser} /> 
+            } 
+          />
+          
+          {/* Admin is now public */}
+          <Route path="/admin/*" element={<AdminDashboard />} />
+
+          {/* Still protected */}
+          <Route 
+            path="/ownerdashboard/*" 
+            element={
+              <ProtectedRoute requiredRole="owner">
+                <OwnerDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/renthouse" 
+            element={
+              <ProtectedRoute>
+                <RentalForm />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </main>
+      
       <Footer />
-    </>
+    </div>
   );
 }
 

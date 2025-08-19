@@ -19,7 +19,8 @@ function Navbar({ user, handleLogout }) {
                             </Link>
                         </div>
 
-                        <div className="hidden lg:flex lg:items-center lg:ml-auto lg:space-x-10">
+                        {/* Centered Links */}
+                        <div className="hidden lg:flex lg:items-center lg:space-x-10 mx-auto">
                             <Link to="/" className="text-base font-medium text-black transition duration-200 hover:text-blue-600">Home</Link>
                             <Link to="/about" className="text-base font-medium text-black transition duration-200 hover:text-blue-600">About us</Link>
                             <Link to="/property" className="text-base font-medium text-black transition duration-200 hover:text-blue-600">Property</Link>
@@ -30,7 +31,7 @@ function Navbar({ user, handleLogout }) {
                         </div>
 
                         {/* Auth Buttons */}
-                        <div className="hidden lg:flex lg:items-center lg:space-x-4 ml-10">
+                        <div className="hidden lg:flex lg:items-center lg:space-x-4">
                             {isLoggedIn ? (
                                 <button
                                     onClick={handleLogout}
@@ -46,12 +47,6 @@ function Navbar({ user, handleLogout }) {
                                     >
                                         Login
                                     </Link>
-                                    <Link
-                                        to="/signupform"
-                                        className="px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                                    >
-                                        Sign up
-                                    </Link>
                                 </>
                             )}
                         </div>
@@ -60,7 +55,7 @@ function Navbar({ user, handleLogout }) {
                     {/* Mobile Nav */}
                     <nav className="pt-4 pb-6 bg-white border border-gray-200 rounded-md shadow-md lg:hidden">
                         <div className="flow-root">
-                            <div className="flex flex-col px-6 -my-2 space-y-1">
+                            <div className="flex flex-col px-6 -my-2 space-y-1 text-center">
                                 <Link to="/" className="inline-flex py-2 text-base font-medium text-black hover:text-blue-600">Home</Link>
                                 <Link to="/about" className="inline-flex py-2 text-base font-medium text-black hover:text-blue-600">About</Link>
                                 <Link to="/property" className="inline-flex py-2 text-base font-medium text-black hover:text-blue-600">Property</Link>
