@@ -25,6 +25,7 @@ import Payments from './admin payments';
 import AdminMessages from './admin messages';
 import Reports from './admin reports';
 import Settings from '../Settings';
+import ManageUsers from './ManageUsers';
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -41,6 +42,7 @@ const AdminDashboard = () => {
 
   const navItems = [
     { id: 'dashboard', icon: <FiHome className="w-5 h-5" />, label: 'Dashboard' },
+    { id: 'users', icon: <FiUsers className="w-5 h-5" />, label: 'Users' },
     { id: 'properties', icon: <FaBuilding className="w-5 h-5" />, label: 'Manage Properties' },
     { id: 'rentals', icon: <FiUsers className="w-5 h-5" />, label: 'Manage Rentals' },
     { id: 'payments', icon: <FiDollarSign className="w-5 h-5" />, label: 'Payments' },
@@ -206,7 +208,8 @@ const AdminDashboard = () => {
           )}
 
           {activeTab !== 'dashboard' && (
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center justify-center">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              {activeTab === 'users' && <ManageUsers />}
               {activeTab === 'properties' && <ManageProperties />}
               {activeTab === 'rentals' && <ManageRentals />}
               {activeTab === 'payments' && <Payments />}

@@ -1,3 +1,74 @@
+/* Auth Forms Styles */
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.auth-form-container {
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  min-width: 320px;
+  margin-bottom: 1rem;
+}
+
+.auth-form-container h2 {
+  margin-bottom: 1.5rem;
+  color: #2d3a4b;
+}
+
+.auth-form-container input {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.auth-form-container button {
+  width: 100%;
+  padding: 0.7rem;
+  background: #2d89ef;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  transition: background 0.2s;
+}
+
+.auth-form-container button:hover {
+  background: #1b5fa7;
+}
+
+.link-btn {
+  background: none;
+  color: #2d89ef;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.error {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.success {
+  color: #388e3c;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;

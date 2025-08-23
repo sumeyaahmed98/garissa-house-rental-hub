@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import AvatarMenu from "./components/AvatarMenu";
+import { useAuth } from "./context/AuthContext";
 
-function Navbar({ user, handleLogout }) {
+function Navbar() {
+    const { user } = useAuth();
     const isLoggedIn = !!user;
 
     return (
@@ -33,12 +36,7 @@ function Navbar({ user, handleLogout }) {
                         {/* Auth Buttons */}
                         <div className="hidden lg:flex lg:items-center lg:space-x-4">
                             {isLoggedIn ? (
-                                <button
-                                    onClick={handleLogout}
-                                    className="px-4 py-2 text-base font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
-                                >
-                                    Logout
-                                </button>
+                                <AvatarMenu />
                             ) : (
                                 <>
                                     <Link
@@ -46,6 +44,18 @@ function Navbar({ user, handleLogout }) {
                                         className="px-4 py-2 text-base font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50"
                                     >
                                         Login
+                                    </Link>
+                                    <Link
+                                        to="/signup"
+                                        className="px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                    >
+                                        Sign up
+                                    </Link>
+                                    <Link
+                                        to="/admin/login"
+                                        className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                                    >
+                                        Admin
                                     </Link>
                                 </>
                             )}
@@ -62,18 +72,13 @@ function Navbar({ user, handleLogout }) {
                                 {isLoggedIn && (
                                     <Link to="/renthouse" className="inline-flex py-2 text-base font-medium text-black hover:text-blue-600">Renthouse</Link>
                                 )}
-                                <Link to="/signup" className="inline-flex py-2 text-base font-medium text-black hover:text-blue-600">Contact</Link>
+                                <Link to="/contact" className="inline-flex py-2 text-base font-medium text-black hover:text-blue-600">Contact</Link>
                             </div>
                         </div>
 
                         <div className="px-6 mt-6 space-y-2">
                             {isLoggedIn ? (
-                                <button
-                                    onClick={handleLogout}
-                                    className="block w-full text-center px-4 py-2 text-base font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
-                                >
-                                    Logout
-                                </button>
+                                <div className="flex justify-center"><AvatarMenu /></div>
                             ) : (
                                 <>
                                     <Link
@@ -87,6 +92,12 @@ function Navbar({ user, handleLogout }) {
                                         className="block w-full text-center px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
                                     >
                                         Sign up
+                                    </Link>
+                                    <Link
+                                        to="/admin/login"
+                                        className="block w-full text-center px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                                    >
+                                        Admin Login
                                     </Link>
                                 </>
                             )}

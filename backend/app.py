@@ -14,9 +14,9 @@ from flask_mail import Mail, Message
 from werkzeug.security import check_password_hash, generate_password_hash
 
 try:  # Support running as module or script
-    from .models import get_db, init_db, close_db
+    from .models import get_db, init_db, close_db, seed_admin_user
 except Exception:  # pragma: no cover
-    from models import get_db, init_db, close_db  # type: ignore
+    from models import get_db, init_db, close_db, seed_admin_user  # type: ignore
 
 
 def create_app() -> Flask:
@@ -40,9 +40,10 @@ def create_app() -> Flask:
     JWTManager(app)
     mail = Mail(app)
 
-    # Ensure DB exists
+    # Ensure DB exists and seed admin user
     with app.app_context():
         init_db()
+        seed_admin_user()
     app.teardown_appcontext(close_db)
 
     @app.get("/health")
@@ -92,19 +93,19 @@ def create_app() -> Flask:
         try:
             db = get_db()
             cur = db.cursor()
-            cur.execute("SELECT id, name, email, password_hash FROM users WHERE email = ?", (email,))
+            cur.execute("SELECT id, name, email, password_hash, is_admin FROM users WHERE email = ?", (email,))
             row = cur.fetchone()
             if not row:
                 return {"message": "Invalid credentials."}, 401
 
-            user_id, name, email, password_hash = row
+            user_id, name, email, password_hash, is_admin = row
             if not check_password_hash(password_hash, password):
                 return {"message": "Invalid credentials."}, 401
 
-            access_token = create_access_token(identity=str(user_id), additional_claims={"name": name, "email": email})
+            access_token = create_access_token(identity=str(user_id), additional_claims={"name": name, "email": email, "is_admin": is_admin})
             return {
                 "access_token": access_token,
-                "user": {"id": user_id, "name": name, "email": email},
+                "user": {"id": user_id, "name": name, "email": email, "is_admin": is_admin},
             }, 200
         except sqlite3.Error:
             return {"message": "Database error during login."}, 500
@@ -116,12 +117,12 @@ def create_app() -> Flask:
         try:
             db = get_db()
             cur = db.cursor()
-            cur.execute("SELECT id, name, email FROM users WHERE id = ?", (user_id,))
+            cur.execute("SELECT id, name, email, is_admin FROM users WHERE id = ?", (user_id,))
             row = cur.fetchone()
             if not row:
                 return {"message": "User not found."}, 404
-            uid, name, email = row
-            return {"id": uid, "name": name, "email": email}, 200
+            uid, name, email, is_admin = row
+            return {"id": uid, "name": name, "email": email, "is_admin": is_admin}, 200
         except sqlite3.Error:
             return {"message": "Database error."}, 500
 
@@ -256,6 +257,71 @@ def create_app() -> Flask:
             return {"message": "Password reset successful."}, 200
         except sqlite3.Error:
             return {"message": "Database error resetting password."}, 500
+
+    # Admin endpoints
+    @app.get("/admin/users")
+    @jwt_required()
+    def get_all_users():
+        """Get all users (admin only)"""
+        try:
+            # Get current user from JWT
+            user_id = get_jwt_identity()
+            db = get_db()
+            cur = db.cursor()
+            
+            # Check if current user is admin
+            cur.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,))
+            user_row = cur.fetchone()
+            if not user_row or not user_row[0]:
+                return {"message": "Admin access required."}, 403
+            
+            # Get all users
+            cur.execute("SELECT id, name, email, is_admin FROM users ORDER BY id")
+            users = []
+            for row in cur.fetchall():
+                users.append({
+                    "id": row[0],
+                    "name": row[1],
+                    "email": row[2],
+                    "is_admin": bool(row[3])
+                })
+            
+            return {"users": users}, 200
+        except sqlite3.Error:
+            return {"message": "Database error fetching users."}, 500
+
+    @app.delete("/admin/users/<int:user_id>")
+    @jwt_required()
+    def delete_user(user_id):
+        """Delete a user (admin only, cannot delete admin users)"""
+        try:
+            # Get current user from JWT
+            current_user_id = get_jwt_identity()
+            db = get_db()
+            cur = db.cursor()
+            
+            # Check if current user is admin
+            cur.execute("SELECT is_admin FROM users WHERE id = ?", (current_user_id,))
+            current_user_row = cur.fetchone()
+            if not current_user_row or not current_user_row[0]:
+                return {"message": "Admin access required."}, 403
+            
+            # Check if target user exists and is not admin
+            cur.execute("SELECT is_admin FROM users WHERE id = ?", (user_id,))
+            target_user_row = cur.fetchone()
+            if not target_user_row:
+                return {"message": "User not found."}, 404
+            
+            if target_user_row[0]:  # is_admin
+                return {"message": "Cannot delete admin users."}, 400
+            
+            # Delete the user
+            cur.execute("DELETE FROM users WHERE id = ?", (user_id,))
+            db.commit()
+            
+            return {"message": "User deleted successfully."}, 200
+        except sqlite3.Error:
+            return {"message": "Database error deleting user."}, 500
 
     return app
 

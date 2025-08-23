@@ -37,7 +37,8 @@ def init_db() -> None:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            password_hash TEXT NOT NULL
+            password_hash TEXT NOT NULL,
+            is_admin BOOLEAN DEFAULT FALSE
         );
         """
     )
@@ -53,5 +54,28 @@ def init_db() -> None:
         """
     )
     db.commit()
+
+def seed_admin_user() -> None:
+    """Create the default admin user if it doesn't exist"""
+    from werkzeug.security import generate_password_hash
+    
+    db = get_db()
+    cur = db.cursor()
+    
+    # Check if admin user already exists
+    cur.execute("SELECT id FROM users WHERE email = ?", ("garissarealestate@gmail.com",))
+    admin_exists = cur.fetchone()
+    
+    if not admin_exists:
+        # Create admin user
+        admin_password_hash = generate_password_hash("sumeyo2025")
+        cur.execute(
+            "INSERT INTO users (name, email, password_hash, is_admin) VALUES (?, ?, ?, ?)",
+            ("Admin", "garissarealestate@gmail.com", admin_password_hash, True)
+        )
+        db.commit()
+        print("✅ Admin user created: garissarealestate@gmail.com")
+    else:
+        print("ℹ️  Admin user already exists")
 
 

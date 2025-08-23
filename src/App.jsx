@@ -1,95 +1,54 @@
-import React, { useState } from "react";
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
 import Property from "./Property";
-import Signup from "./Signup";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import SignupForm from "./signupForm";
-import LoginForm from "./LoginForm";
 import RentalForm from "./Renthouse";
 import AdminDashboard from "./admin/AdminDashboard";
 import OwnerDashboard from "./owner/OwnerDashboard";
 import Contact from "../Contact";
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
+import ChangePassword from "./pages/ChangePassword.jsx";
+import AdminLogin from "./pages/AdminLogin.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
+
+function RequireAuth({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+}
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-  };
-
-  const isAuthenticated = !!user;
-  const isAdmin = user?.role === "admin";
-  const isOwner = user?.role === "owner";
-
-  const ProtectedRoute = ({ children, requiredRole }) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
-    }
-
-    if (requiredRole && user.role !== requiredRole) {
-      return <Navigate to="/unauthorized" replace />;
-    }
-
-    return children;
-  };
-
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar user={user} handleLogout={handleLogout} />
+      <Navbar />
       
       <main className="flex-grow">
         <Routes>
-          {/* Public routes */}
+          {/* Auth routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/change-password" element={<RequireAuth><ChangePassword /></RequireAuth>} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* Public routes - no login required */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/property" element={<Property />} />
-          <Route path="/signup" element={<Signup />} />
-           <Route path="/signupform" element={< SignupForm />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* Authentication routes */}
-          <Route 
-            path="/login" 
-            element={
-              isAuthenticated ? 
-                <Navigate to={isAdmin ? "/admin" : isOwner ? "/ownerdashboard" : "/"} /> : 
-                <LoginForm setUser={setUser} /> 
-            } 
-          />
-          <Route 
-            path="/signupForm" 
-            element={
-              isAuthenticated ? 
-                <Navigate to={isAdmin ? "/admin" : isOwner ? "/ownerdashboard" : "/"} /> : 
-                <SignupForm setUser={setUser} /> 
-            } 
-          />
-          
-          {/* Admin is now public */}
-          <Route path="/admin/*" element={<AdminDashboard />} />
-
-          {/* Still protected */}
-          <Route 
-            path="/ownerdashboard/*" 
-            element={
-              <ProtectedRoute requiredRole="owner">
-                <OwnerDashboard />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/renthouse" 
-            element={
-              <ProtectedRoute>
-                <RentalForm />
-              </ProtectedRoute>
-            } 
-          />
+          {/* Protected routes - require login */}
+          <Route path="/admin/*" element={<RequireAuth><AdminDashboard /></RequireAuth>} />
+          <Route path="/ownerdashboard/*" element={<RequireAuth><OwnerDashboard /></RequireAuth>} />
+          <Route path="/renthouse" element={<RequireAuth><RentalForm /></RequireAuth>} />
         </Routes>
       </main>
       
