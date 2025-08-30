@@ -17,11 +17,14 @@ const Login = () => {
       const user = await login(form.email, form.password);
       toast.success('Logged in successfully');
       
-      // Redirect based on user type
+      // Redirect based on user role
       if (user.is_admin) {
         navigate('/admin/login');
-      } else {
+      } else if (user.role === 'owner') {
         navigate('/ownerdashboard');
+      } else {
+        // Default to tenant dashboard
+        navigate('/tenantdashboard');
       }
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Login failed');

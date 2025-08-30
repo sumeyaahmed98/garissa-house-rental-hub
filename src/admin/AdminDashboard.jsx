@@ -2,52 +2,38 @@ import { useState } from 'react';
 import {
   FiHome,
   FiUsers,
-  FiDollarSign,
   FiSettings,
-  FiMessageSquare,
-  FiPieChart,
-  FiBell,
-  FiSearch,
+  FiTrendingUp,
   FiMenu,
   FiX,
   FiChevronDown,
   FiChevronLeft,
   FiChevronRight,
   FiLogOut,
-  FiAlertCircle
+  FiSearch,
 } from 'react-icons/fi';
-import { FaBuilding } from 'react-icons/fa';
+import { FaHome } from 'react-icons/fa';
 
 // Updated imports (make sure your file names match these)
 import ManageProperties from './ManageProperties';
-import ManageRentals from '../managerentals';
-import Payments from './admin payments';
-import AdminMessages from './admin messages';
-import Reports from './admin reports';
+
+import EnhancedAdminReports from './EnhancedAdminReports';
 import Settings from '../Settings';
 import ManageUsers from './ManageUsers';
+import AdminManageRentals from './AdminManageRentals';
+import AdminDashboardOverview from './AdminDashboardOverview';
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Example metrics for admin dashboard
-  const dashboardStats = [
-    { title: 'Total Properties', value: 25, change: '+4%', isPositive: true },
-    { title: 'Active Rentals', value: 40, change: '+2%', isPositive: true },
-    { title: 'Overdue Payments', value: 5, change: '+1', isPositive: false },
-    { title: 'Total Revenue', value: 'KSh 1,240,000', change: '+10%', isPositive: true },
-  ];
-
   const navItems = [
     { id: 'dashboard', icon: <FiHome className="w-5 h-5" />, label: 'Dashboard' },
     { id: 'users', icon: <FiUsers className="w-5 h-5" />, label: 'Users' },
-    { id: 'properties', icon: <FaBuilding className="w-5 h-5" />, label: 'Manage Properties' },
+    { id: 'properties', icon: <FaHome className="w-5 h-5" />, label: 'Manage Properties' },
     { id: 'rentals', icon: <FiUsers className="w-5 h-5" />, label: 'Manage Rentals' },
-    { id: 'payments', icon: <FiDollarSign className="w-5 h-5" />, label: 'Payments' },
-    { id: 'messages', icon: <FiMessageSquare className="w-5 h-5" />, label: 'Messages' },
-    { id: 'reports', icon: <FiPieChart className="w-5 h-5" />, label: 'Reports' },
+    { id: 'reports', icon: <FiTrendingUp className="w-5 h-5" />, label: 'Reports' },
     { id: 'settings', icon: <FiSettings className="w-5 h-5" />, label: 'Settings' },
   ];
 
@@ -74,7 +60,7 @@ const AdminDashboard = () => {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-center py-6 px-4 bg-blue-600">
-            <FaBuilding className="text-white text-3xl" />
+            <FaHome className="text-white text-3xl" />
             {sidebarOpen && (
               <span className="ml-2 text-white text-xl font-bold">AdminPanel</span>
             )}
@@ -148,10 +134,7 @@ const AdminDashboard = () => {
                 />
               </div>
 
-              <button className="p-2 rounded-full hover:bg-gray-100 relative">
-                <FiBell className="w-5 h-5" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
+
 
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
@@ -166,58 +149,12 @@ const AdminDashboard = () => {
 
         {/* Dashboard Content */}
         <main className="p-6">
-          {activeTab === 'dashboard' && (
-            <>
-              {/* Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {dashboardStats.map((stat, idx) => (
-                  <div key={idx} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
-                    <h3 className="text-sm font-medium text-gray-500">{stat.title}</h3>
-                    <div className="mt-2 flex items-baseline">
-                      <p className="text-2xl font-semibold">{stat.value}</p>
-                      <span className={`ml-2 text-sm ${stat.isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                        {stat.change}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Example recent section */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">System Alerts</h2>
-                  <button className="text-sm text-blue-600 hover:text-blue-800">View All</button>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-start pb-4 border-b border-gray-100">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600">
-                      <FiAlertCircle className="w-5 h-5" />
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium">Overdue Payment</h4>
-                        <span className="text-xs text-gray-500">10 min ago</span>
-                      </div>
-                      <p className="text-sm text-gray-600">Tenant John Doe - KSh 15,000</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {activeTab !== 'dashboard' && (
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-              {activeTab === 'users' && <ManageUsers />}
-              {activeTab === 'properties' && <ManageProperties />}
-              {activeTab === 'rentals' && <ManageRentals />}
-              {activeTab === 'payments' && <Payments />}
-              {activeTab === 'messages' && <AdminMessages />}
-              {activeTab === 'reports' && <Reports />}
-              {activeTab === 'settings' && <Settings />}
-            </div>
-          )}
+          {activeTab === 'dashboard' && <AdminDashboardOverview />}
+          {activeTab === 'users' && <ManageUsers />}
+          {activeTab === 'properties' && <ManageProperties />}
+          {activeTab === 'rentals' && <AdminManageRentals />}
+          {activeTab === 'reports' && <EnhancedAdminReports />}
+          {activeTab === 'settings' && <Settings />}
         </main>
       </div>
     </div>

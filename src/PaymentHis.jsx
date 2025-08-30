@@ -1,4 +1,4 @@
-import { FiDollarSign, FiCalendar, FiDownload, FiFilter } from 'react-icons/fi';
+import { FiDollarSign, FiCalendar, FiArrowDown, FiSettings } from 'react-icons/fi';
 import React, { useState } from "react";
 
 
@@ -59,7 +59,7 @@ const PaymentHis = () => {
             Filter
           </button>
           <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            <FiDownload className="mr-2" />
+                            <FiArrowDown className="mr-2" />
             Export
           </button>
         </div>

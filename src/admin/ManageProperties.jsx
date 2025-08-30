@@ -1,21 +1,36 @@
-import { useState } from 'react';
-import { FiPlus, FiEdit2, FiTrash2, FiFilter, FiSearch, FiDownload } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import { FiPlus, FiEdit, FiTrash2, FiSettings, FiSearch, FiArrowDown, FiFilter } from 'react-icons/fi';
+import { api } from '../lib/api';
+import toast from 'react-hot-toast';
 
 const ManageProperties = () => {
-  const [properties, setProperties] = useState([
-    { id: 1, name: 'Luxury Apartment', location: 'Westlands', units: 8, status: 'Active' },
-    { id: 2, name: 'Garden Villas', location: 'Karen', units: 12, status: 'Active' },
-    { id: 3, name: 'City View Towers', location: 'CBD', units: 24, status: 'Maintenance' },
-    { id: 4, name: 'Riverside Apartments', location: 'Kilimani', units: 16, status: 'Active' },
-  ]);
-
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [currentProperty, setCurrentProperty] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const fetchProperties = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/properties');
+      setProperties(response.data.properties || []);
+    } catch (error) {
+      toast.error('Failed to fetch properties');
+      console.error('Error fetching properties:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredProperties = properties.filter(property =>
-    property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    property.location.toLowerCase().includes(searchTerm.toLowerCase())
+    property.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    property.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    property.city?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleEdit = (property) => {
@@ -23,9 +38,37 @@ const ManageProperties = () => {
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    setProperties(properties.filter(property => property.id !== id));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await api.delete(`/properties/${id}`);
+      toast.success('Property deleted successfully');
+      fetchProperties(); // Refresh the list
+    } catch (error) {
+      toast.error('Failed to delete property');
+      console.error('Error deleting property:', error);
+    }
   };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-KE', {
+      style: 'currency',
+      currency: 'KES',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -41,7 +84,7 @@ const ManageProperties = () => {
             Filters
           </button>
           <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            <FiDownload className="mr-2" />
+            <FiArrowDown className="mr-2" />
             Export
           </button>
         </div>
@@ -67,54 +110,118 @@ const ManageProperties = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property Name</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Units</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rent</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredProperties.map((property) => (
-                <tr key={property.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{property.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{property.location}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{property.units}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${property.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                      {property.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button onClick={() => handleEdit(property)} className="text-blue-600 hover:text-blue-900 mr-4">
-                      <FiEdit2 />
-                    </button>
-                    <button onClick={() => handleDelete(property.id)} className="text-red-600 hover:text-red-900">
-                      <FiTrash2 />
-                    </button>
+              {filteredProperties.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                    {searchTerm ? 'No properties found matching your search' : 'No properties available'}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredProperties.map((property) => (
+                  <tr key={property.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{property.title}</div>
+                        <div className="text-sm text-gray-500">ID: {property.id}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{property.address}</div>
+                      <div className="text-sm text-gray-500">{property.city}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{property.bedrooms} beds, {property.bathrooms} baths</div>
+                      <div className="text-sm text-gray-500">{property.property_type}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {formatCurrency(property.rent_amount)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${property.status === 'available' ? 'bg-green-100 text-green-800' :
+                          property.status === 'rented' ? 'bg-blue-100 text-blue-800' :
+                            'bg-yellow-100 text-yellow-800'
+                        }`}>
+                        {property.status?.charAt(0).toUpperCase() + property.status?.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button onClick={() => handleEdit(property)} className="text-blue-600 hover:text-blue-900 mr-4">
+                        <FiEdit />
+                      </button>
+                      <button onClick={() => handleDelete(property.id)} className="text-red-600 hover:text-red-900">
+                        <FiTrash2 />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
+      </div>
 
-        <div className="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
-          <div className="text-sm text-gray-500">
-            Showing <span className="font-medium">1</span> to <span className="font-medium">4</span> of <span className="font-medium">4</span> results
+      {/* Property Count Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="flex items-center">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <FiSettings className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Total Properties</p>
+              <p className="text-2xl font-bold text-gray-900">{properties.length}</p>
+            </div>
           </div>
-          <div className="flex space-x-2">
-            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-              Previous
-            </button>
-            <button className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-              Next
-            </button>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="flex items-center">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <FiSettings className="w-6 h-6 text-green-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Available</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {properties.filter(p => p.status === 'available').length}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="flex items-center">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <FiSettings className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Rented</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {properties.filter(p => p.status === 'rented').length}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="flex items-center">
+            <div className="p-2 bg-yellow-100 rounded-lg">
+              <FiSettings className="w-6 h-6 text-yellow-600" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-600">Maintenance</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {properties.filter(p => p.status === 'maintenance').length}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Property Modal would go here */}
     </div>
   );
 };

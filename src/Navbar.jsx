@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import AvatarMenu from "./components/AvatarMenu";
 import { useAuth } from "./context/AuthContext";
+import { FiChevronDown, FiUser, FiHome } from "react-icons/fi";
 
 function Navbar() {
     const { user } = useAuth();
     const isLoggedIn = !!user;
+    const [showSignupDropdown, setShowSignupDropdown] = useState(false);
 
     return (
         <div>
@@ -45,12 +47,39 @@ function Navbar() {
                                     >
                                         Login
                                     </Link>
-                                    <Link
-                                        to="/signup"
-                                        className="px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
-                                    >
-                                        Sign up
-                                    </Link>
+                                    
+                                    {/* Signup Dropdown */}
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setShowSignupDropdown(!showSignupDropdown)}
+                                            className="px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 flex items-center"
+                                        >
+                                            Sign up
+                                            <FiChevronDown className="ml-1 w-4 h-4" />
+                                        </button>
+                                        
+                                        {showSignupDropdown && (
+                                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                                                <Link
+                                                    to="/tenant-signup"
+                                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setShowSignupDropdown(false)}
+                                                >
+                                                    <FiUser className="mr-2 w-4 h-4 text-blue-500" />
+                                                    Find a Home
+                                                </Link>
+                                                <Link
+                                                    to="/owner-signup"
+                                                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setShowSignupDropdown(false)}
+                                                >
+                                                    <FiHome className="mr-2 w-4 h-4 text-green-500" />
+                                                    List Property
+                                                </Link>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
                                     <Link
                                         to="/admin/login"
                                         className="px-3 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
@@ -88,10 +117,16 @@ function Navbar() {
                                         Login
                                     </Link>
                                     <Link
-                                        to="/signup"
-                                        className="block w-full text-center px-4 py-2 text-base font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                                        to="/tenant-signup"
+                                        className="block w-full text-center px-4 py-2 text-base font-medium text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50"
                                     >
-                                        Sign up
+                                        Find a Home
+                                    </Link>
+                                    <Link
+                                        to="/owner-signup"
+                                        className="block w-full text-center px-4 py-2 text-base font-semibold text-white bg-green-600 rounded-md hover:bg-green-700"
+                                    >
+                                        List Property
                                     </Link>
                                     <Link
                                         to="/admin/login"
@@ -105,6 +140,14 @@ function Navbar() {
                     </nav>
                 </div>
             </header>
+            
+            {/* Click outside to close dropdown */}
+            {showSignupDropdown && (
+                <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowSignupDropdown(false)}
+                />
+            )}
         </div>
     );
 }

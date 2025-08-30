@@ -1,58 +1,41 @@
 import { useState } from 'react';
 import {
   FiHome,
-  FiPlusCircle,
+  FiPlus,
   FiUsers,
-  FiMessageSquare,
-  FiDollarSign,
-  FiPieChart,
+  FiTrendingUp,
   FiSettings,
   FiLogOut,
-  FiBell,
   FiSearch,
   FiMenu,
   FiX,
   FiChevronDown,
   FiChevronRight,
-  FiChevronLeft
+  FiChevronLeft,
+  FiMessageSquare
 } from 'react-icons/fi';
-import { FaAirbnb } from 'react-icons/fa';
-import RentalForm from '../Renthouse';
+import { FaHome } from 'react-icons/fa';
+import PropertyForm from '../components/PropertyForm';
 import ManageRentals from '../managerentals';
 import ViewTenants from '../viewtenants';
-import Messages from '../messages';
- import PaymentHis from '../PaymentHis'
-import AnalyticsReports from '../AnalyticReports';
+import AdminReports from '../admin/AdminReports';
 import Settings from '../Settings';
-
+import OwnerDashboardOverview from './OwnerDashboardOverview';
+import ContactRequests from '../components/ContactRequests';
+import OwnerReports from '../components/OwnerReports';
 
 const OwnerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const dashboardStats = [
-    { title: 'Total Properties', value: 8, change: '+2', isPositive: true },
-    { title: 'Active Rentals', value: 6, change: '+1', isPositive: true },
-    { title: 'Pending Payments', value: 2, change: '-1', isPositive: false },
-    { title: 'Monthly Revenue', value: 'KSh 240,500', change: '+12%', isPositive: true },
-  ];
-
-  const recentActivities = [
-    { id: 1, type: 'payment', tenant: 'Ahmed Mohamed', property: 'Garissa Heights #4', amount: 'KSh 15,000', date: '10 min ago' },
-    { id: 2, type: 'new tenant', tenant: 'Fatuma Abdi', property: 'River View Apartments', date: '1 hour ago' },
-    { id: 3, type: 'maintenance', tenant: 'Omar Hassan', property: 'Townhouse #2', issue: 'Plumbing', date: '3 hours ago' },
-    { id: 4, type: 'payment', tenant: 'Aisha Abdullahi', property: 'Garissa Heights #3', amount: 'KSh 12,500', date: '1 day ago' },
-  ];
-
   const navItems = [
     { id: 'dashboard', icon: <FiHome className="w-5 h-5" />, label: 'Dashboard' },
-    { id: 'add-property', icon: <FiPlusCircle className="w-5 h-5" />, label: 'Add Property' },
+    { id: 'add-property', icon: <FiPlus className="w-5 h-5" />, label: 'Add Property' },
     { id: 'manage-rentals', icon: <FiHome className="w-5 h-5" />, label: 'Manage Rentals' },
     { id: 'view-tenants', icon: <FiUsers className="w-5 h-5" />, label: 'View Tenants' },
-    { id: 'messages', icon: <FiMessageSquare className="w-5 h-5" />, label: 'Messages' },
-    { id: 'payment-history', icon: <FiDollarSign className="w-5 h-5" />, label: 'Payment History' },
-    { id: 'analytics', icon: <FiPieChart className="w-5 h-5" />, label: 'Analytics & Reports' },
+    { id: 'contact-requests', icon: <FiMessageSquare className="w-5 h-5" />, label: 'Contact Requests' },
+    { id: 'analytics', icon: <FiTrendingUp className="w-5 h-5" />, label: 'Analytics & Reports' },
     { id: 'settings', icon: <FiSettings className="w-5 h-5" />, label: 'Settings' },
   ];
 
@@ -63,6 +46,11 @@ const OwnerDashboard = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setMobileMenuOpen(false);
+  };
+
+  const handlePropertyCreated = (propertyId) => {
+    // You can add logic here to refresh property list or show success message
+    console.log('Property created with ID:', propertyId);
   };
 
   return (
@@ -82,7 +70,7 @@ const OwnerDashboard = () => {
         <div className="flex flex-col h-full">
           {/* Logo/Brand */}
           <div className="flex items-center justify-center py-6 px-4 bg-blue-600">
-            <FaAirbnb className="text-white text-3xl" />
+            <FaHome className="text-white text-3xl" />
             {sidebarOpen && (
               <span className="ml-2 text-white text-xl font-bold">RentalPro</span>
             )}
@@ -160,10 +148,7 @@ const OwnerDashboard = () => {
                 />
               </div>
 
-              <button className="p-2 rounded-full hover:bg-gray-100 relative">
-                <FiBell className="w-5 h-5" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
+
 
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
@@ -178,84 +163,13 @@ const OwnerDashboard = () => {
 
         {/* Dashboard Content */}
         <main className="p-6">
-          {activeTab === 'dashboard' && (
-            <>
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {dashboardStats.map((stat, index) => (
-                  <div key={index} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
-                    <h3 className="text-sm font-medium text-gray-500">{stat.title}</h3>
-                    <div className="mt-2 flex items-baseline">
-                      <p className="text-2xl font-semibold">{stat.value}</p>
-                      <span className={`ml-2 text-sm ${stat.isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                        {stat.change}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Map Placeholder */}
-              <div className="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">Property Locations</h2>
-                  <button className="text-sm text-blue-600 hover:text-blue-800">View All</button>
-                </div>
-                <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-gray-500 mb-2">Garissa, Kenya</p>
-                    <p className="text-sm text-gray-400">Map integration would appear here</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recent Activity */}
-              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">Recent Activity</h2>
-                  <button className="text-sm text-blue-600 hover:text-blue-800">View All</button>
-                </div>
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => (
-                    <div key={activity.id} className="flex items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${activity.type === 'payment' ? 'bg-green-100 text-green-600' : activity.type === 'new tenant' ? 'bg-blue-100 text-blue-600' : 'bg-yellow-100 text-yellow-600'}`}>
-                        {activity.type === 'payment' ? (
-                          <FiDollarSign className="w-5 h-5" />
-                        ) : activity.type === 'new tenant' ? (
-                          <FiUsers className="w-5 h-5" />
-                        ) : (
-                          <FiHome className="w-5 h-5" />
-                        )}
-                      </div>
-                      <div className="ml-4 flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium">{activity.tenant}</h4>
-                          <span className="text-xs text-gray-500">{activity.date}</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          {activity.property}
-                          {activity.amount && ` • ${activity.amount}`}
-                          {activity.issue && ` • ${activity.issue}`}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {activeTab !== 'dashboard' && (
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center justify-center">
-              {activeTab === 'add-property' && <RentalForm />}
-              {activeTab === 'manage-rentals' && <ManageRentals />}
-              {activeTab === 'view-tenants' && <ViewTenants />}
-              {activeTab === 'messages' && <Messages />}
-              {activeTab === 'payment-history' && <PaymentHis />}
-              {activeTab === 'analytics' && <AnalyticsReports />}
-                 {activeTab === 'settings' && <Settings />}
-            </div>
-          )}
+          {activeTab === 'dashboard' && <OwnerDashboardOverview />}
+          {activeTab === 'add-property' && <PropertyForm onSuccess={handlePropertyCreated} />}
+          {activeTab === 'manage-rentals' && <ManageRentals />}
+          {activeTab === 'view-tenants' && <ViewTenants />}
+          {activeTab === 'contact-requests' && <ContactRequests />}
+          {activeTab === 'analytics' && <OwnerReports />}
+          {activeTab === 'settings' && <Settings />}
         </main>
       </div>
     </div>

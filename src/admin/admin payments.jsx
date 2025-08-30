@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiFilter, FiDownload, FiCheckCircle, FiAlertCircle, FiClock } from 'react-icons/fi';
+import { FiSettings, FiArrowDown, FiCheck, FiAlertCircle, FiClock } from 'react-icons/fi';
 
 const Payments = () => {
   const [payments, setPayments] = useState([
@@ -20,7 +20,7 @@ const Payments = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'Paid':
-        return <FiCheckCircle className="text-green-500" />;
+        return <FiCheck className="text-green-500" />;
       case 'Overdue':
         return <FiAlertCircle className="text-red-500" />;
       case 'Pending':
@@ -63,7 +63,7 @@ const Payments = () => {
             )}
           </div>
           <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            <FiDownload className="mr-2" />
+                            <FiArrowDown className="mr-2" />
             Export
           </button>
         </div>

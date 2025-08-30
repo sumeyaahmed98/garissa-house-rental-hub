@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiPlus, FiEdit2, FiTrash2, FiFileText, FiCalendar } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiTrash2, FiCheck, FiCalendar } from 'react-icons/fi';
 
 const ManageRentals = () => {
   const [rentals, setRentals] = useState([
@@ -85,10 +85,10 @@ const ManageRentals = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
                     <button onClick={() => handleGenerateContract(rental.id)} className="text-gray-600 hover:text-gray-900" title="Generate Contract">
-                      <FiFileText />
+                      <FiCheck />
                     </button>
                     <button onClick={() => { setCurrentRental(rental); setShowModal(true); }} className="text-blue-600 hover:text-blue-900" title="Edit">
-                      <FiEdit2 />
+                      <FiEdit />
                     </button>
                     <button onClick={() => setRentals(rentals.filter(r => r.id !== rental.id))} className="text-red-600 hover:text-red-900" title="Delete">
                       <FiTrash2 />

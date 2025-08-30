@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiSearch, FiHome, FiMapPin, FiDollarSign, FiCheckCircle, FiStar, FiUser, FiHeart } from 'react-icons/fi';
-import { FaAirbnb, FaTripadvisor } from 'react-icons/fa';
+import { FiSearch, FiHome, FiMapPin, FiDollarSign, FiCheck, FiStar, FiUser, FiHeart } from 'react-icons/fi';
+import { FaHome, FaStar } from 'react-icons/fa';
 
 
 const Home = () => {
@@ -126,7 +126,7 @@ const Home = () => {
     {
       title: 'Book With Confidence',
       description: 'Secure booking with our trusted payment system and transparent cancellation policies.',
-      icon: <FiCheckCircle className="w-8 h-8" />
+                    icon: <FiCheck className="w-8 h-8" />
     },
     {
       title: 'Enjoy Your Stay',
@@ -525,7 +525,7 @@ const Home = () => {
                     transition={{ delay: index * 0.1 }}
                     className="flex items-start"
                   >
-                    <FiCheckCircle className="text-teal-500 mt-1 mr-3 flex-shrink-0" />
+                    <FiCheck className="text-teal-500 mt-1 mr-3 flex-shrink-0" />
                     <span className="text-gray-700">{benefit}</span>
                   </motion.li>
                 ))}
@@ -679,13 +679,13 @@ const Home = () => {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-center"
           >
             <motion.div variants={slideUp} className="flex justify-center">
-              <FaAirbnb className="text-gray-700 w-24 h-24 opacity-70 hover:opacity-100 transition-opacity" />
+              <FaHome className="text-gray-700 w-24 h-24 opacity-70 hover:opacity-100 transition-opacity" />
             </motion.div>
             <motion.div variants={slideUp} className="flex justify-center">
               {/* <SiBookingdotcom className="text-gray-700 w-20 h-20 opacity-70 hover:opacity-100 transition-opacity" /> */}
             </motion.div>
             <motion.div variants={slideUp} className="flex justify-center">
-              <FaTripadvisor className="text-gray-700 w-20 h-20 opacity-70 hover:opacity-100 transition-opacity" />
+              <FaStar className="text-gray-700 w-20 h-20 opacity-70 hover:opacity-100 transition-opacity" />
             </motion.div>
             <motion.div variants={slideUp} className="flex justify-center">
               <div className="text-gray-700 text-xl font-bold opacity-70 hover:opacity-100 transition-opacity">VRBO</div>

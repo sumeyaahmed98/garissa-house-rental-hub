@@ -1,12 +1,17 @@
-import { FiUser, FiMail, FiPhone, FiLock, FiCreditCard, FiGlobe } from 'react-icons/fi';
-import React, { useState } from "react";
+import { FiUser, FiMail, FiPhone, FiLock, FiDollarSign, FiSettings } from 'react-icons/fi';
+import React, { useState, useEffect } from "react";
+import { useAuth } from './context/AuthContext';
+import { api } from './lib/api';
+import toast from 'react-hot-toast';
 
 const Settings = () => {
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: 'Abdullahi Mohamed',
-    email: 'abdullahi@example.com',
-    phone: '+254712345678',
+    name: '',
+    email: '',
+    phone: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
@@ -14,15 +19,85 @@ const Settings = () => {
     language: 'en',
   });
 
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+      }));
+    }
+  }, [user]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    alert('Settings saved successfully!');
+    setLoading(true);
+
+    try {
+      const response = await api.put('/profile', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+      });
+
+      if (response.data.user) {
+        updateUser(response.data.user);
+        toast.success('Profile updated successfully!');
+      }
+    } catch (error) {
+      toast.error('Failed to update profile');
+      console.error('Error updating profile:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      toast.error('New passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await api.put('/change-password', {
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+      });
+
+      toast.success('Password changed successfully!');
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      }));
+    } catch (error) {
+      toast.error('Failed to change password');
+      console.error('Error changing password:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!user) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -48,17 +123,10 @@ const Settings = () => {
               Security
             </button>
             <button
-              onClick={() => setActiveTab('billing')}
-              className={`w-full text-left px-4 py-3 rounded-lg flex items-center ${activeTab === 'billing' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}
-            >
-              <FiCreditCard className="mr-3" />
-              Billing
-            </button>
-            <button
               onClick={() => setActiveTab('preferences')}
               className={`w-full text-left px-4 py-3 rounded-lg flex items-center ${activeTab === 'preferences' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}
             >
-              <FiGlobe className="mr-3" />
+              <FiSettings className="mr-3" />
               Preferences
             </button>
           </nav>
@@ -69,7 +137,7 @@ const Settings = () => {
           {activeTab === 'profile' && (
             <div>
               <h3 className="text-lg font-medium mb-6">Profile Information</h3>
-              <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+              <form onSubmit={handleProfileSubmit} className="space-y-4 max-w-lg">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                   <div className="relative">
@@ -80,6 +148,7 @@ const Settings = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
                     />
                   </div>
                 </div>
@@ -94,6 +163,7 @@ const Settings = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
                     />
                   </div>
                 </div>
@@ -112,14 +182,26 @@ const Settings = () => {
                   </div>
                 </div>
 
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Save Changes
-                  </button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                  <div className="relative">
+                    <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={user.role || 'User'}
+                      className="w-full pl-10 pr-4 py-2 border rounded-lg bg-gray-50 text-gray-500"
+                      disabled
+                    />
+                  </div>
                 </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                  {loading ? 'Updating...' : 'Update Profile'}
+                </button>
               </form>
             </div>
           )}
@@ -127,7 +209,7 @@ const Settings = () => {
           {activeTab === 'security' && (
             <div>
               <h3 className="text-lg font-medium mb-6">Security Settings</h3>
-              <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+              <form onSubmit={handlePasswordSubmit} className="space-y-4 max-w-lg">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
                   <div className="relative">
@@ -138,7 +220,7 @@ const Settings = () => {
                       value={formData.currentPassword}
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter current password"
+                      required
                     />
                   </div>
                 </div>
@@ -153,7 +235,8 @@ const Settings = () => {
                       value={formData.newPassword}
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter new password"
+                      required
+                      minLength="6"
                     />
                   </div>
                 </div>
@@ -168,87 +251,27 @@ const Settings = () => {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Confirm new password"
+                      required
+                      minLength="6"
                     />
                   </div>
                 </div>
 
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Update Password
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                  {loading ? 'Changing Password...' : 'Change Password'}
+                </button>
               </form>
-            </div>
-          )}
-
-          {activeTab === 'billing' && (
-            <div>
-              <h3 className="text-lg font-medium mb-6">Billing Information</h3>
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm text-yellow-700">
-                      Update your billing information to receive payments from tenants.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="max-w-lg">
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                  <h4 className="font-medium mb-4">Payment Methods</h4>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="flex items-center">
-                        <div className="w-10 h-6 bg-blue-100 rounded flex items-center justify-center mr-3">
-                          <span className="text-xs font-bold text-blue-600">MP</span>
-                        </div>
-                        <div>
-                          <p className="font-medium">M-Pesa</p>
-                          <p className="text-sm text-gray-500">+254712345678</p>
-                        </div>
-                      </div>
-                      <button className="text-blue-600 hover:text-blue-800 text-sm">
-                        Edit
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="flex items-center">
-                        <div className="w-10 h-6 bg-green-100 rounded flex items-center justify-center mr-3">
-                          <span className="text-xs font-bold text-green-600">BK</span>
-                        </div>
-                        <div>
-                          <p className="font-medium">Bank Account</p>
-                          <p className="text-sm text-gray-500">KCB •••• 6789</p>
-                        </div>
-                      </div>
-                      <button className="text-blue-600 hover:text-blue-800 text-sm">
-                        Edit
-                      </button>
-                    </div>
-                  </div>
-
-                  <button className="mt-4 px-4 py-2 border border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-700 w-full">
-                    + Add Payment Method
-                  </button>
-                </div>
-              </div>
             </div>
           )}
 
           {activeTab === 'preferences' && (
             <div>
               <h3 className="text-lg font-medium mb-6">Preferences</h3>
-              <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+              <div className="space-y-4 max-w-lg">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
                   <select
@@ -257,9 +280,9 @@ const Settings = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="KES">Kenyan Shilling (KSh)</option>
-                    <option value="USD">US Dollar ($)</option>
-                    <option value="EUR">Euro (€)</option>
+                    <option value="KES">Kenyan Shilling (KES)</option>
+                    <option value="USD">US Dollar (USD)</option>
+                    <option value="EUR">Euro (EUR)</option>
                   </select>
                 </div>
 
@@ -276,15 +299,13 @@ const Settings = () => {
                   </select>
                 </div>
 
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Save Preferences
-                  </button>
-                </div>
-              </form>
+                <button
+                  type="button"
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Save Preferences
+                </button>
+              </div>
             </div>
           )}
         </div>

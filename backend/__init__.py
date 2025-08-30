@@ -1,3 +1,4 @@
-from .app import create_app  # noqa: F401
+# This file is intentionally empty to avoid circular imports
+# when running app.py directly
 
 

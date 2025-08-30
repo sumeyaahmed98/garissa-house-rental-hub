@@ -1,4 +1,4 @@
-import { FiBarChart2, FiDollarSign, FiPieChart, FiDownload } from 'react-icons/fi';
+import { FiTrendingUp, FiDollarSign, FiStar, FiArrowDown } from 'react-icons/fi';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 
@@ -43,7 +43,7 @@ const AnalyticsReports = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold">Analytics & Reports</h2>
         <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-          <FiDownload className="mr-2" />
+                          <FiArrowDown className="mr-2" />
           Export Report
         </button>
       </div>
@@ -52,7 +52,7 @@ const AnalyticsReports = () => {
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium flex items-center">
-              <FiBarChart2 className="mr-2 text-blue-600" />
+              <FiTrendingUp className="mr-2 text-blue-600" />
               Monthly Revenue
             </h3>
             <select className="text-sm border rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -79,7 +79,7 @@ const AnalyticsReports = () => {
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium flex items-center">
-              <FiPieChart className="mr-2 text-green-600" />
+              <FiStar className="mr-2 text-green-600" />
               Occupancy Rate
             </h3>
           </div>

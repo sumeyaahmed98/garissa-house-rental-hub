@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiTrash2, FiUser, FiMail, FiShield, FiAlertCircle } from 'react-icons/fi';
+import { FiTrash2, FiUser, FiMail, FiLock, FiAlertCircle, FiHome, FiSearch } from 'react-icons/fi';
 import { api } from '../lib/api';
 import toast from 'react-hot-toast';
 
@@ -41,6 +41,41 @@ const ManageUsers = () => {
       console.error('Error deleting user:', error);
     } finally {
       setDeleting(null);
+    }
+  };
+
+  const getRoleInfo = (role, isAdmin) => {
+    if (isAdmin) {
+      return {
+        icon: <FiLock className="w-4 h-4 text-red-500 mr-2" />,
+        label: 'Admin',
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-800'
+      };
+    }
+    
+    switch (role) {
+      case 'owner':
+        return {
+          icon: <FiHome className="w-4 h-4 text-blue-500 mr-2" />,
+          label: 'Owner',
+          bgColor: 'bg-blue-100',
+          textColor: 'text-blue-800'
+        };
+      case 'tenant':
+        return {
+          icon: <FiSearch className="w-4 h-4 text-green-500 mr-2" />,
+          label: 'Tenant',
+          bgColor: 'bg-green-100',
+          textColor: 'text-green-800'
+        };
+      default:
+        return {
+          icon: <FiUser className="w-4 h-4 text-gray-400 mr-2" />,
+          label: role || 'User',
+          bgColor: 'bg-gray-100',
+          textColor: 'text-gray-800'
+        };
     }
   };
 
@@ -87,76 +122,68 @@ const ManageUsers = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <span className="text-blue-600 font-semibold text-sm">
-                            {user.name.charAt(0).toUpperCase()}
-                          </span>
+              {users.map((user) => {
+                const roleInfo = getRoleInfo(user.role, user.is_admin);
+                return (
+                  <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <span className="text-blue-600 font-semibold text-sm">
+                              {user.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                          <div className="text-sm text-gray-500">ID: {user.id}</div>
                         </div>
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">ID: {user.id}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <FiMail className="w-4 h-4 text-gray-400 mr-2" />
+                        <span className="text-sm text-gray-900">{user.email}</span>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <FiMail className="w-4 h-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{user.email}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        {roleInfo.icon}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleInfo.bgColor} ${roleInfo.textColor}`}>
+                          {roleInfo.label}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {user.is_admin ? (
-                        <>
-                          <FiShield className="w-4 h-4 text-red-500 mr-2" />
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                            Admin
-                          </span>
-                        </>
+                        <div className="flex items-center text-gray-400">
+                          <FiAlertCircle className="w-4 h-4 mr-1" />
+                          <span className="text-xs">Protected</span>
+                        </div>
                       ) : (
-                        <>
-                          <FiUser className="w-4 h-4 text-gray-400 mr-2" />
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            User
-                          </span>
-                        </>
+                        <button
+                          onClick={() => handleDeleteUser(user.id, user.name)}
+                          disabled={deleting === user.id}
+                          className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {deleting === user.id ? (
+                            <>
+                              <div className="animate-spin rounded-full h-3 w-3 border-b border-red-700 mr-1"></div>
+                              Deleting...
+                            </>
+                          ) : (
+                            <>
+                              <FiTrash2 className="w-3 h-3 mr-1" />
+                              Delete
+                            </>
+                          )}
+                        </button>
                       )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    {user.is_admin ? (
-                      <div className="flex items-center text-gray-400">
-                        <FiAlertCircle className="w-4 h-4 mr-1" />
-                        <span className="text-xs">Protected</span>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleDeleteUser(user.id, user.name)}
-                        disabled={deleting === user.id}
-                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {deleting === user.id ? (
-                          <>
-                            <div className="animate-spin rounded-full h-3 w-3 border-b border-red-700 mr-1"></div>
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <FiTrash2 className="w-3 h-3 mr-1" />
-                            Delete
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

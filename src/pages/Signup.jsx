@@ -17,8 +17,8 @@ const Signup = () => {
       const result = await signup(form);
       toast.success('Account created successfully!');
       
-      // Redirect based on user type (new users are not admins by default)
-      navigate('/ownerdashboard');
+      // New users are registered as tenants by default
+      navigate('/tenantdashboard');
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Signup failed');
     } finally {
@@ -36,7 +36,7 @@ const Signup = () => {
             <input name="name" value={form.name} onChange={onChange} required className="mt-1 w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="text-sm font-medium text-gray-700">Email</label>
             <input name="email" type="email" value={form.email} onChange={onChange} required className="mt-1 w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none" />
           </div>
           <div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiMessageSquare, FiSearch, FiSend, FiPaperclip, FiMoreVertical } from 'react-icons/fi';
+import { FiMessageSquare, FiSearch, FiSend, FiLink, FiMoreHorizontal } from 'react-icons/fi';
 
 const Messages = () => {
   const [activeConversation, setActiveConversation] = useState(1);
@@ -117,7 +117,7 @@ const Messages = () => {
                   </div>
                 </div>
                 <button className="text-gray-400 hover:text-gray-600">
-                  <FiMoreVertical />
+                  <FiMoreHorizontal />
                 </button>
               </div>
 
@@ -144,7 +144,7 @@ const Messages = () => {
               <div className="p-4 border-t border-gray-200">
                 <form onSubmit={handleSendMessage} className="flex items-center">
                   <button type="button" className="p-2 text-gray-400 hover:text-gray-600">
-                    <FiPaperclip />
+                    <FiLink />
                   </button>
                   <input
                     type="text"

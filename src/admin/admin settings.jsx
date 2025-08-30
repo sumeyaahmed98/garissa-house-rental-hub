@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiUser, FiLock, FiCreditCard, FiBell, FiMail, FiShield } from 'react-icons/fi';
+import { FiUser, FiLock, FiDollarSign, FiBell, FiMail, FiSettings } from 'react-icons/fi';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('profile');
@@ -59,7 +59,7 @@ const Settings = () => {
             onClick={() => setActiveTab('billing')}
             className={`flex items-center w-full px-4 py-3 text-left rounded-lg ${activeTab === 'billing' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
           >
-            <FiCreditCard className="w-5 h-5 mr-3" />
+                            <FiDollarSign className="w-5 h-5 mr-3" />
             Billing
           </button>
         </nav>
@@ -129,7 +129,7 @@ const Settings = () => {
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-medium mb-6 flex items-center">
-                  <FiShield className="mr-2" />
+                  <FiSettings className="mr-2" />
                   Security Settings
                 </h3>
                 <div className="space-y-4">
@@ -260,7 +260,7 @@ const Settings = () => {
         {activeTab === 'billing' && (
           <div>
             <h3 className="text-lg font-medium mb-6 flex items-center">
-              <FiCreditCard className="mr-2" />
+                              <FiDollarSign className="mr-2" />
               Billing Information
             </h3>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -281,7 +281,7 @@ const Settings = () => {
                 <h4 className="text-sm font-medium text-gray-700 mb-2">Payment Method</h4>
                 <div className="flex items-center">
                   <div className="bg-gray-100 p-2 rounded-md mr-3">
-                    <FiCreditCard className="h-5 w-5 text-gray-600" />
+                    <FiDollarSign className="h-5 w-5 text-gray-600" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">VISA ending in 4242</p>

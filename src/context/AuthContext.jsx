@@ -39,6 +39,26 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const tenantSignup = async (payload) => {
+    const { data } = await api.post('/tenant-signup', payload);
+    // Auto-login after signup
+    if (data.access_token) {
+      localStorage.setItem('token', data.access_token);
+      setUser(data.user);
+    }
+    return data;
+  };
+
+  const ownerSignup = async (payload) => {
+    const { data } = await api.post('/owner-signup', payload);
+    // Auto-login after signup
+    if (data.access_token) {
+      localStorage.setItem('token', data.access_token);
+      setUser(data.user);
+    }
+    return data;
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -56,7 +76,18 @@ export const AuthProvider = ({ children }) => {
     await api.post('/change-password', { currentPassword, newPassword, confirmNewPassword });
   };
 
-  const value = useMemo(() => ({ user, loading, login, signup, logout, requestPasswordReset, resetPassword, changePassword }), [user, loading]);
+  const value = useMemo(() => ({ 
+    user, 
+    loading, 
+    login, 
+    signup, 
+    tenantSignup, 
+    ownerSignup, 
+    logout, 
+    requestPasswordReset, 
+    resetPassword, 
+    changePassword 
+  }), [user, loading]);
 
   return (
     <AuthContext.Provider value={value}>

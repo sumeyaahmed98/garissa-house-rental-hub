@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiDownload, FiFilter, FiBarChart2, FiDollarSign, FiHome, FiUsers } from 'react-icons/fi';
+import { FiArrowDown, FiSettings, FiTrendingUp, FiDollarSign, FiHome, FiUsers, FiFilter } from 'react-icons/fi';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const Reports = () => {
@@ -45,7 +45,7 @@ const Reports = () => {
             Filter
           </button>
           <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            <FiDownload className="mr-2" />
+                            <FiArrowDown className="mr-2" />
             Export
           </button>
         </div>
@@ -96,7 +96,7 @@ const Reports = () => {
       <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold">
-            <FiBarChart2 className="inline mr-2" />
+                            <FiTrendingUp className="inline mr-2" />
             {activeReport === 'rental' ? 'Monthly Rental Income' : activeReport === 'property' ? 'Property Distribution' : 'Financial Overview'}
           </h3>
           <select className="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
